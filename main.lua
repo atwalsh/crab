@@ -639,7 +639,7 @@ function check_scoring()
       sfx(3) -- score sound
       last_hit_time = t() -- reset timer for AI serve delay
       score_flash = 30
-      score_flash_color = 12
+      score_flash_color = 3  -- green color for AI score
       
       -- create splash effect
       create_splash(ball.x, ground_y, 10)
@@ -824,10 +824,29 @@ function draw_game()
     line(net_x, y, net_x+net_width-1, y, 6)
   end
   
-  -- draw shadows under crabs
+  -- draw shadows on the ground below crabs (always at ground level)
   fillp(0b1010010110100101)
-  circfill(crab1.x + 4, ground_y + 1, 4, 5)
-  circfill(crab2.x + 4, ground_y + 1, 4, 5)
+  
+  -- shadow size depends on crab height (smaller when higher up)
+  local c1_shadow_size = max(2, 4 - (ground_y - crab1.y)/8)
+  local c2_shadow_size = max(2, 4 - (ground_y - crab2.y)/8)
+  
+  -- shadow y-position (lower when crab is on ground)
+  local c1_shadow_y = ground_y + 3
+  local c2_shadow_y = ground_y + 3
+  
+  -- if crab is jumping, move shadow up a bit
+  if crab1.y < ground_y then
+    c1_shadow_y = ground_y + 1
+  end
+  
+  if crab2.y < ground_y then
+    c2_shadow_y = ground_y + 1
+  end
+  
+  -- draw the shadows
+  circfill(crab1.x + 4, c1_shadow_y, c1_shadow_size, 5)
+  circfill(crab2.x + 4, c2_shadow_y, c2_shadow_size, 5)
   fillp()
   
   -- draw crabs with improved visuals
